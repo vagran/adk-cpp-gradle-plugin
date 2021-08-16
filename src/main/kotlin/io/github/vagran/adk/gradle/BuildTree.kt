@@ -83,6 +83,10 @@ class BuildTree(private val adkConfig: AdkExtension) {
                 throw Error("Binary type other than application is not yet supported")
             }
 
+            if (moduleRegistry.mainModules.isEmpty()) {
+                throw Error("No main module(s) specified")
+            }
+
             val modules = ModuleRegistry.GatherAllDependencies(moduleRegistry.mainModules)
 
             defines.addAll(adkConfig.define)
