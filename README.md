@@ -46,7 +46,7 @@ adk {
         cflags("-g", "-O0")
         define("DEBUG")
     } else {
-        cfalgs("-O3")
+        cflags("-O3")
     }
 }
 ```
@@ -70,8 +70,6 @@ against the current module.
 ```groovy
 module {
     name = "module_name"
-    // Mark module as part of main module
-    main()
     // Fully qualified module names
     depends("dependency", "modules")
     // Default is "include" if present
@@ -102,36 +100,36 @@ having such modules directories structure:
 implies `foo.bar` submodule name which still can be overridden by `name` property if needed.
 
 Although, C++ standard does not restrict module naming convention, this plugin assumes modules
-hierarchy reflected by its name, where dot is submodules separator. Last component of a module fully
-qualified name is considered module _basename_.
+hierarchy reflected by a module name, where dot is submodules separator. Last component of a module
+fully qualified name is considered module _basename_.
 
 Each module may have exactly one module interface file (_partitions_ are not yet supported since they
 are not yet supported by Clang). Its name is expected to be `module_basename.cppm` (extension may
 differ if overridden by `adk.cppModuleIfaceExt` property).
 
-Implementation file is optional for a module. A module without interface may be useful just to imply
+Interface file is optional for a module. A module without interface may be useful just to imply
 hierarchical name, or may be just to add some header files or libraries.
 
 There may be other module interface files in a module directory, they will be considiered part of
-corresponding submodule. For example, in the following directory layout:
+the corresponding submodule. For example, in the following directory layout:
 ```
 +-foo
   +-foo.cppm
   +-bar.cppm
 ```
-modules `foo` (directory default module) and `foo.bar` will be created. Configuration for `foo.bar` 
-module can be specified in named module block in `module.gradle`:
+modules `foo` (_directory default module_) and `foo.bar` will be created. Configuration for `foo.bar` 
+module can be specified in a named module block in `module.gradle`:
 ```groovy
 module("foo") {
     define("FOO")
 }
 ```
 
-Module may have implementation files. There are several rules about their matching. 
+Module may have implementation files. There are several rules for their matching. 
 `module_basename.cpp` (extension may differ if overridden by `adk.cppModuleImplExt` property) is
 matched to corresponding module. `impl` directory content is scanned recursively for implementation
 files which are assigned to directory default module. Custom directories and files may be specified
-by `impl` property. Any leftover files are assigned to directory default module. For example, with
+by `impl` property. Any leftover files are assigned to a directory default module. For example, with
 the following module directory layout:
 ```
 +-foo
