@@ -59,6 +59,8 @@ added to `.gitignore`) with the following content:
 ```
 adkCxx=/path/to/clang/bin/clang++
 ```
+Alternatively, command-line options (`-PadkCxx=/path/to/clang/bin/clang++`) or `CXX` environment 
+variable can be used for that purpose.
 
 Your project should contain one or more C++ modules. `modules` property specifies directories to 
 look for modules in. When looking for a module, `module.gradle` file is evaluated against the 
