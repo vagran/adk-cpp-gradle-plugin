@@ -190,3 +190,9 @@ main(int argc, char **argv)
 {
 }
 ```
+
+## Compilation database support
+
+The plugin is able to generate 
+[compilation database](https://clang.llvm.org/docs/JSONCompilationDatabase.html) JSON file for
+integration with IDEs which support it. Use `generateCompileDb` target to generate it.
