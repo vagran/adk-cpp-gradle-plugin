@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib", "1.4.31"))
+    implementation("com.google.code.gson:gson:2.8.8")
 }
 
 pluginBundle {

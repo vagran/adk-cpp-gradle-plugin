@@ -35,6 +35,7 @@ class AdkPlugin: Plugin<Project> {
             buildTree.Build(registry)
             buildTree.CreateBuildTask()
             buildTree.CreateCleanTask()
+            buildTree.CreateCompileDbTask()
         }
     }
 }

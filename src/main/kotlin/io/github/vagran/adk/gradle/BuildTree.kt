@@ -1,11 +1,12 @@
 package io.github.vagran.adk.gradle
 
+import com.google.gson.GsonBuilder
 import org.gradle.api.Task
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Exec
 import java.io.File
+import java.nio.file.Files
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.reflect.KClass
 
 /** Represents build plan with all artifacts, their dependencies and required actions to produce
@@ -42,6 +43,35 @@ class BuildTree(private val adkConfig: AdkExtension) {
         task.delete(buildDir)
         task.group = "clean"
         task.description = "Delete all build artifacts"
+        return task
+    }
+
+    fun CreateCompileDbTask(): Task
+    {
+        val tasks = ArrayList<Task>()
+
+        fun AddTask(node: BuildNode)
+        {
+            node.task?.also { tasks.add(it) }
+        }
+
+        rootNodes.forEach {
+            it.FindDepDeep<CppCompiledModuleFileNode>().forEach(::AddTask)
+            it.FindDepDeep<ObjectFileNode>().forEach(::AddTask)
+        }
+
+        val task = adkConfig.project.tasks.register("generateCompileDb", Task::class.java).get()
+        task.group = "Compile DB"
+        task.description = "Generator compile DB JSON file"
+        val dbFile = buildDir.resolve("compile_commands.json")
+        task.outputs.file(dbFile)
+
+        task.doFirst {
+            println("[Generate compilation database] $dbFile")
+        }
+        task.doLast {
+            CreateCompileDbFile(tasks, dbFile)
+        }
         return task
     }
 
@@ -193,5 +223,35 @@ class BuildTree(private val adkConfig: AdkExtension) {
             return task
         }
         return null
+    }
+
+    data class CompileDbEntry(val directory: String, val file: String, val arguments: List<String>,
+                              val output: String)
+
+    private fun CreateCompileDbFile(tasks: Iterable<Task>, filePath: File)
+    {
+        val builder = GsonBuilder()
+        builder.setPrettyPrinting()
+        builder.disableHtmlEscaping()
+        val gson = builder.create()
+
+        val db = ArrayList<CompileDbEntry>()
+
+        val dirPath = adkConfig.project.rootDir.toString()
+        tasks.forEach {
+            task ->
+            if (task !is Exec) {
+                return@forEach
+            }
+            db.add(CompileDbEntry(dirPath,
+                                  task.inputs.files.singleFile.absolutePath,
+                                  task.commandLine,
+                                  task.outputs.files.singleFile.absolutePath))
+        }
+
+        Files.newBufferedWriter(filePath.toPath()).use {
+            writer ->
+            gson.toJson(db, writer)
+        }
     }
 }
