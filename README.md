@@ -13,7 +13,7 @@ Apply the plugin (published on
 [Gradle plugins portal](https://plugins.gradle.org/plugin/io.github.vagran.adk.gradle)):
 ```kotlin
 plugins {
-    id("io.github.vagran.adk.gradle") version "1.0"
+    id("io.github.vagran.adk.gradle") version "1.0.1"
 }
 ```
 
