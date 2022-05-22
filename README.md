@@ -128,8 +128,8 @@ the corresponding submodule. For example, in the following directory layout:
 modules `foo` (_directory default module_) and `foo.bar` will be created. Configuration for `foo.bar` 
 module can be specified in a named module block in `module.gradle`:
 ```groovy
-module("foo") {
-    define("FOO")
+module("bar") {
+    define("BAR")
 }
 ```
 
